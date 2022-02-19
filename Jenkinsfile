@@ -1,4 +1,42 @@
 pipeline{
+agent any
+	stages{
+		stage('Compile Stage') {
+		steps { 
+			withMaven(maven : 'mvn3.8.4'){
+				sh 'mvn clean compile'
+			}
+			}
+		}
+
+		stage('Testing Stage') {
+		steps { 
+			withMaven(maven : 'mvn3.8.4'){
+				sh 'mvn test'
+			}
+			}
+		}
+		stage('deploy stage') {
+		steps { 
+			withMaven(maven : 'mvn3.8.4'){
+				sh 'mvn deploy'
+			}
+			}
+		}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*pipeline{
 
 agent any
 
@@ -51,9 +89,9 @@ stages{
   }
   }
   */
-}//Stages Closing
+//Stages Closing
 
-post{
+/*post{
 
  success{
  emailext to: 'devopstrainingblr@gmail.com,mithuntechnologies@yahoo.com',
@@ -73,3 +111,6 @@ post{
 
 
 }//Pipeline closing
+*/
+
+
