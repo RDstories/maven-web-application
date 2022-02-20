@@ -1,36 +1,35 @@
-pipeline{
-agent any
-	stages{
-		stage('Compile Stage') {
-		steps { 
-			withMaven(maven : 'mvn3.8.4'){
-				sh 'mvn clean compile'
-			}
-			}
-		}
-
-		stage('Testing Stage') {
-		steps { 
-			withMaven(maven : 'mvn3.8.4'){
-				sh 'mvn test'
-			}
-			}
-		}
-		stage('deploy stage') {
-		steps { 
-			withMaven(maven : 'mvn3.8.4'){
-				sh 'mvn deploy'
-			}
-			}
-		}
+node ('master')
+{
+    def mvnhome = tool name:"maven3.8.4"
+    stage('checkout')
+    {
+        git credentialsId: 'rajigit', url: 'https://github.com/RDstories/maven-web-application.git'
+    }
+    stage('build')
+    {
+        sh "${mvnhome}/bin/mvn clean package"
+    }
+    stage('QA')
+    {
+        sh "${mvnhome}/bin/mvn  sonar:sonar"
+    }
+    stage('nexus')
+    {
+        sh "${mvnhome}/bin/mvn  deploy"
+    }
+     stage ('deploy')
+     {
+       sshagent(['retest']) {
+            sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@65.2.37.169:/opt/apache-tomcat-9.0.58/webapps"
+        }
+    }
+   /*stage('sendemail')
+   {
+       mail bcc: '', body: 'chudu chudu chudu devops ne chudu anil ni chusavo peeka kosthaaa', cc: 'rajitha.svtm@gmail.com', from: '', replyTo: '', subject: 'build completuuuuuu naaa pipe success', to: 'lokesh.adriot@gmail.com'
+       
+   }*/
+   
 }
-
-
-
-
-
-
-
 
 
 
