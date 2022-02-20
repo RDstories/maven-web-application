@@ -1,6 +1,7 @@
 node ('master')
 {
     def mvnhome = tool name:"maven3.8.4"
+	properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')), pipelineTriggers([pollSCM('* * * * *')])])
     stage('checkout')
     {
         git credentialsId: 'rajigit', url: 'https://github.com/RDstories/maven-web-application.git'
